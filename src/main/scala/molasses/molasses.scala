@@ -1,6 +1,7 @@
 package molasses
 import com.redis._
 import molasses.adapters._
+import java.util.zip.CRC32
 object Molasses {
 
 
@@ -26,15 +27,38 @@ object Molasses {
     if (result == None) {
       false
     } else {
-    (result.get("active"), result.get("percentage"))  match {
-          case (false, 0) => false
+      (result.get("active"), result.get("percentage"))  match {
+          case (false, _) => false
+          case (_, 0) => false
           case (true, 100) => true
+          case (_, 100) => false
+          case (true, _) => false
           case (_, _) => false
       }
     }
   }
 
-  /**def isActive(client: A, key: String): Boolean = {
-      Redis.isActive(client,key)
-  }*/
+  def isActive(client: Any, key: String, userId: Integer): Boolean = {
+    var adapter = getAdapter(client)
+    var result = adapter.getFeature(client, key)
+    if (result == None) {
+      false
+    } else {
+      (result.get("active"), result.get("percentage"))  match {
+          case (false, 0) => false
+          case (_, 0) => false
+          case (_, 100) => true
+          case (_, percentage:Int) => {
+            val id = userId.toString()
+            val crc= new CRC32
+            crc.update(id.getBytes)
+            val crcResult:Int = (crc.getValue % 100).toInt.abs
+            crcResult <= percentage
+          }
+          case (_, _) => false
+      }
+    }
+  }
+
+
 }
