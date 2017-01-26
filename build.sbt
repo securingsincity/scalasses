@@ -1,7 +1,9 @@
 import Dependencies._
 
 libraryDependencies ++= Seq(
-    "net.debasishg" %% "redisclient" % "3.3"
+    "net.debasishg" %% "redisclient" % "3.3",
+    // "com.typesafe.slick" % "slick" % "3.1.1",
+    "org.slf4j" % "slf4j-nop" % "1.6.4"
 )
 
 lazy val root = (project in file(".")).

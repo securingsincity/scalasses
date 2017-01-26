@@ -1,5 +1,6 @@
 package molasses.adapters
 import com.redis._
+import molasses.{Util => molassesUtil}
 object Redis extends StorageAdapter {
     def get(client: Any, key: String): Option[String] = {
         var newClient:RedisClient = client.asInstanceOf[RedisClient]
@@ -41,7 +42,7 @@ object Redis extends StorageAdapter {
                     "name" -> key,
                     "active" -> active.toBoolean,
                     "percentage" -> percentage.toInt,
-                    "users" -> users
+                    "users" -> molassesUtil.convertToList(users)
                 ))
             }
         }

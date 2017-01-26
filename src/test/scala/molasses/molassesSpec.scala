@@ -29,5 +29,13 @@ class MolassesSpec extends FlatSpec with Matchers {
     r.flushdb
   }
 
+  it should "should have an isActive/3 function for users groups" in {
+    val r = new RedisClient("localhost", 6379)
+    Molasses.activate(r, "my_feature", List(3, 4))
+    Molasses.isActive(r, "my_feature", 34) shouldEqual false
+    Molasses.isActive(r, "my_feature", 3) shouldEqual true
+    r.flushdb
+  }
+
 
 }
